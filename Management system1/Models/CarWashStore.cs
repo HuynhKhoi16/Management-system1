@@ -3,26 +3,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ManagementSystem1.Models
+namespace Management_system1.Models
 {
-    //GAS STATION
-    class GasStation : location
+    class CarWashStore : location
     {
         public override string Id { get; set; }
         public override string Address { get; set; }
 
         public override int NumOfWorkers { get; set; }
 
-        public string Profit { get; set; }
+        public double Rating { get; set; }
 
-        public GasStation(string id, string address, int numOfWorkers, int profit) : base(id, address, numOfWorkers)
+        public string Profit { get; set; }
+        public CarWashStore(string  id, string address, int numOfWorkers, double rating, int profit) : base (id, address, numOfWorkers)
         {
             Id = id;
             Address = address;
             NumOfWorkers = numOfWorkers;
+            Rating = rating;
             Profit = "$" + Convert.ToString(profit);
         }
-
-
     }
 }

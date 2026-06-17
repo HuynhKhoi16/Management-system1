@@ -36,7 +36,7 @@ namespace ManagementSystem1.Services
 
 
         //1.ADD GAS STATION
-        public static void AddGS(List<GasStation> gasStations)
+        public static void AddCW(List<GasStation> gasStations)
         {
             string id;
 
@@ -91,7 +91,7 @@ namespace ManagementSystem1.Services
 
 
         //2. VIEW ALL GAS STATION
-        public static void ViewAllGS(List<GasStation> gasStations)
+        public static void ViewAllCW(List<GasStation> gasStations)
         {
             if (gasStations.Count == 0)
             {
@@ -99,11 +99,11 @@ namespace ManagementSystem1.Services
             }
             else
             {
-                Console.WriteLine($"{"GasStationId",-20} {"Address",-25} {"Number of Workers",-10} {"Profit per week",-10}");
+                Console.WriteLine($"{"GasStationId",-20} {"Address",-25} {"Number of Workers",-22} {"Profit per week",-10}");
 
                 foreach (GasStation gasStation in gasStations.OrderBy(x => x.Id))
                 {
-                    Console.WriteLine($"{gasStation.Id,-20} {gasStation.Address,-25} {gasStation.NumOfWorkers,-10} {gasStation.Profit,-10}");
+                    Console.WriteLine($"{gasStation.Id,-20} {gasStation.Address,-25} {gasStation.NumOfWorkers,-22} {gasStation.Profit,-10}");
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace ManagementSystem1.Services
 
 
         //3. UPDATE GAS STATION INFORMATION
-        public static void UpdateGS(List<GasStation> gasStations)
+        public static void UpdateCW(List<GasStation> gasStations)
         {
             string id;
             GasStation gasStation;
@@ -191,7 +191,7 @@ namespace ManagementSystem1.Services
 
 
         //DELETE GAS STATION
-        public static void DeleteGS(List<GasStation> gasStations)
+        public static void DeleteCW(List<GasStation> gasStations)
         {
             string id;
             GasStation gasStation;
