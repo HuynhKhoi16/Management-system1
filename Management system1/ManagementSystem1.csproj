@@ -8,4 +8,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\fluor\source\repos\Management system1\Management system1\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\fluor\source\repos\Management system1\Management system1\.editorconfig" />
+  </ItemGroup>
+
 </Project>
