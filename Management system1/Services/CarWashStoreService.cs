@@ -1,13 +1,54 @@
-﻿using Management_system1.Models;
-using ManagementSystem1.Models;
+﻿using ManagementSystem1.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Management_system1.Services
+
+namespace ManagementSystem1.Services
 {
     class CarWashStoreService
     {
+        //CAR WASH STORE INTERFACE
+        public static void CWMainHub(List<CarWashStore> carWashStores)
+        {
+            while (true)
+            {
+                Console.WriteLine("===Welcome to Car Wash store Management===");
+                Console.WriteLine("1. Add a new store");
+                Console.WriteLine("2. View all location");
+                Console.WriteLine("3. Update Location Information");
+                Console.WriteLine("4. Delete Location");
+                Console.WriteLine("0. Exit");
+                Console.Write("Choose the number to proceed: ");
+
+                int num0;
+                while (!int.TryParse(Console.ReadLine(), out num0))
+                {
+                    Console.Write("Invalid entry, Re-enter the value: ");
+                }
+
+                switch (num0)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        CarWashStoreService.AddGS(carWashStores);
+                        break;
+                    case 2:
+                        CarWashStoreService.ViewAllGS(carWashStores);
+                        break;
+                    case 3:
+                        CarWashStoreService.UpdateGS(carWashStores);
+                        break;
+                    case 4:
+                        CarWashStoreService.DeleteGS(carWashStores);
+                        break;
+                    default:
+                        Console.WriteLine("Out of range number.");
+                        break;
+                }
+            }
+        }
+
+
 
         //CW HELPER
         public static bool CheckValidId(string id, List<CarWashStore> carWashStores)
@@ -38,7 +79,7 @@ namespace Management_system1.Services
         }
 
 
-        //1.ADD GAS STATION
+        //1. ADD GAS STATION
         public static void AddGS(List<CarWashStore> carWashStores)
         {
             string id;
@@ -90,7 +131,7 @@ namespace Management_system1.Services
             int numOfWorkers;
             while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
             {
-                Console.WriteLine("Invalid entry, re-enter the number: ");
+                Console.Write("Invalid entry, re-enter the number: ");
 
             }
 
@@ -127,9 +168,6 @@ namespace Management_system1.Services
                 }
             }
         }
-
-
-
 
 
 
@@ -185,7 +223,7 @@ namespace Management_system1.Services
             int numOfWorkers;
             while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
             {
-                Console.WriteLine("Invalid entry, re-enter the number: ");
+                Console.Write("Invalid entry, re-enter the number: ");
 
             }
 
@@ -224,7 +262,7 @@ namespace Management_system1.Services
 
 
 
-        //DELETE GAS STATION
+        //4. DELETE GAS STATION
         public static void DeleteGS(List<CarWashStore> carWashStores)
         {
             string id;
@@ -253,4 +291,3 @@ namespace Management_system1.Services
         }
     }
 }
-

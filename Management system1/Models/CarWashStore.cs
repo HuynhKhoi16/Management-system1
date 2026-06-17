@@ -1,9 +1,6 @@
-﻿using ManagementSystem1.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
-namespace Management_system1.Models
+namespace ManagementSystem1.Models
 {
     class CarWashStore : location
     {

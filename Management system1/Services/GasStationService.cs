@@ -6,6 +6,53 @@ namespace ManagementSystem1.Services
 {
     class GasStationService
     {
+        //INTERFACE FOR GAS STATIONS
+        public static void GSMainHub(List<GasStation> gasStations)
+        {
+            while (true)
+            {
+                Console.WriteLine("===Welcome to Gas Station Management===");
+                Console.WriteLine("1. Add Gas Station Location");
+                Console.WriteLine("2. View all location");
+                Console.WriteLine("3. Update Location Information");
+                Console.WriteLine("4. Delete Location");
+                Console.WriteLine("0. Exit");
+                Console.Write("Choose the number to proceed: ");
+
+                int num0;
+                while (!int.TryParse(Console.ReadLine(), out num0))
+                {
+                    Console.Write("Invalid entry, Re-enter the value: ");
+                }
+
+                switch (num0)
+                {
+                    case 0:
+                        return;
+                    case 1:
+                        GasStationService.AddCW(gasStations);
+                        break;
+                    case 2:
+                        GasStationService.ViewAllCW(gasStations);
+                        break;
+                    case 3:
+                        GasStationService.UpdateCW(gasStations);
+                        break;
+                    case 4:
+                        GasStationService.DeleteCW(gasStations);
+                        break;
+                    default:
+                        Console.WriteLine("Out of range number.");
+                        break;
+                }
+            }
+        }
+
+
+
+
+
+
         //GS HELPER
         public static bool CheckValidId(string id, List<GasStation> gasStations)
         {
@@ -35,7 +82,7 @@ namespace ManagementSystem1.Services
         }
 
 
-        //1.ADD GAS STATION
+        //1. ADD GAS STATION
         public static void AddCW(List<GasStation> gasStations)
         {
             string id;
@@ -70,7 +117,7 @@ namespace ManagementSystem1.Services
             int numOfWorkers;
             while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
             {
-                Console.WriteLine("Invalid entry, re-enter the number: ");
+                Console.Write("Invalid entry, re-enter the number: ");
 
             }
 
@@ -165,7 +212,7 @@ namespace ManagementSystem1.Services
             int numOfWorkers;
             while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
             {
-                Console.WriteLine("Invalid entry, re-enter the number: ");
+                Console.Write("Invalid entry, re-enter the number: ");
 
             }
 
@@ -190,7 +237,7 @@ namespace ManagementSystem1.Services
 
 
 
-        //DELETE GAS STATION
+        //4. DELETE GAS STATION
         public static void DeleteCW(List<GasStation> gasStations)
         {
             string id;
