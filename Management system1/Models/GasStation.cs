@@ -4,7 +4,7 @@ using System;
 namespace ManagementSystem1.Models
 {
     //GAS STATION
-    public class GasStation : location
+    public class GasStation : Location
     {
         public override string Id { get; set; }
         public override string Address { get; set; }

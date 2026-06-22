@@ -1,4 +1,6 @@
-﻿using Management_system1.Database_Connection;
+﻿
+using Management_system1.Database_Connection;
+using ManagementSystem1.Database_Connection;
 using ManagementSystem1.Models;
 
 using Microsoft.Data.SqlClient;
@@ -13,7 +15,7 @@ namespace Management_system1.SQL_Connection
         string ConnectionString;
         string tableName;
 
-        SqlGasStation(string connectionString, string tableName)
+        public SqlGasStation(string connectionString, string tableName)
         {
             ConnectionString = connectionString;
             this.tableName = tableName;

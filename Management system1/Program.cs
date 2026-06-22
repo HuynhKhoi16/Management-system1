@@ -1,4 +1,7 @@
 ﻿
+using Management_system1.Database_Connection;
+using Management_system1.SQL_Connection;
+using ManagementSystem1.Database_Connection;
 using ManagementSystem1.Models;
 using ManagementSystem1.Services;
 using ManagementSystem1.Testing;
@@ -9,22 +12,21 @@ using System.Data.SqlTypes;
 
 
 namespace ManagementSystem1
-{ 
+{
     class Program
-        {
-
-
-        
-
-
-
+    {
         static void Main(string[] args)
         {
 
+            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
+            CWDatabase CWRepo = new SqlCarWashStore(connectionString, "CarWashstores");
+            GSDatabase GSRepo = new SqlGasStation(connectionString, "GasStations");
+            CarWashStoreService CWService = new CarWashStoreService(CWRepo);
+            GasStationService GSService = new GasStationService(GSRepo);
+
 
             //INTERFACE FOR LOCATIONS
-        public static void mainHub(List<GasStation> gasStations, List<CarWashStore> carWashStores)
-        {
+
             while (true)
             {
                 Console.WriteLine("====Welcome to Location Management====");
@@ -44,10 +46,10 @@ namespace ManagementSystem1
                     case 0:
                         return;
                     case 1:
-                        GasStationService.GSMainHub();
+                        GSService.GSMainHub();
                         break;
                     case 2:
-                        CarWashStoreService.CWMainHub();
+                        CWService.CWMainHub();
                         break;
                     default:
                         Console.WriteLine("Out of range number.");
@@ -55,9 +57,6 @@ namespace ManagementSystem1
                 }
             }
         }
-
-
-
     }
-    }
+     
 }

@@ -20,7 +20,7 @@ namespace ManagementSystem1.Services
 
 
         //CAR WASH STORE INTERFACE
-        public void CWMainHub(List<CarWashStore> carWashStores)
+        public void CWMainHub()
         {
             while (true)
             {
@@ -43,16 +43,16 @@ namespace ManagementSystem1.Services
                     case 0:
                         return;
                     case 1:
-                        this.AddCW();
+                        this.Add();
                         break;
                     case 2:
-                        Res.ViewDatabase();
+                        this.View();
                         break;
                     case 3:
-                        this.UpdateCW();
+                        this.Update();
                         break;
                     case 4:
-                        this.DeleteCW();
+                        this.Delete();
                         break;
                     default:
                         Console.WriteLine("Out of range number.");
@@ -86,7 +86,7 @@ namespace ManagementSystem1.Services
 
 
         //1. ADD CAR WASH
-        public void AddCW()
+        public void Add()
         {
             string id;
 
@@ -165,11 +165,14 @@ namespace ManagementSystem1.Services
 
 
         //2. VIEW ALL CAR WASH
-
+        public void View()
+        {
+            Res.ViewDatabase();
+        }
 
 
         //3. UPDATE CAR WASH INFORMATION
-        public void UpdateCW()
+        public void Update()
         {
             string id;
             while (true)
@@ -252,37 +255,13 @@ namespace ManagementSystem1.Services
 
 
         
-        //3.1. UPDATE VALUE TO DATABASE
-        static void UpdateCW(string oldId, CarWashStore carWashStore)
-        {
-            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
-            using(SqlConnection cnn = new SqlConnection(connectionString)) {
-                string sql = "Update CarWashStores" +
-                              "Set Id = @Id" +
-                              "Address = @Address" +
-                              "NumOfWorker = @NumOfWorker" +
-                              "Rating = @Rating" +
-                              "Profit = @Profit" +
-                              "where oldId = @oldId";
-                using(SqlCommand cmd = new SqlCommand(sql, cnn)) { 
-                    cmd.Parameters.AddWithValue("@id", carWashStore.Id);
-                    cmd.Parameters.AddWithValue("@Address", carWashStore.Address);
-                    cmd.Parameters.AddWithValue("@NumOfWorkers", carWashStore.NumOfWorkers);
-                    cmd.Parameters.AddWithValue("@Rating", carWashStore.Rating);
-                    cmd.Parameters.AddWithValue("@Profit", carWashStore.Profit);
-                    cmd.Parameters.AddWithValue("@oldId", oldId);
-
-                    cnn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
+  
 
 
 
 
         //4. DELETE GAS STATION
-        public void DeleteCW()
+        public void Delete()
         {
             string id;
             CarWashStore carWashStore;
@@ -305,25 +284,10 @@ namespace ManagementSystem1.Services
             }
 
             //carWashStores.Remove(carWashStore);
-            DeleteFromDatabase(id);
+            Res.DeleteFromDatabase(id);
             Console.WriteLine($"Gas Station {id} was removed");
         }
 
 
-
-        //4.1 DELETE FROM DATABASE
-        static void DeleteFromDatabase(string Id)
-        {
-            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
-            using(SqlConnection cnn = new SqlConnection(connectionString)) {
-                string sql = "Delete from CarWashStores" +
-                            "where Id = @Id";
-                using(SqlCommand cmd = new SqlCommand(sql, cnn)) {
-                    cmd.Parameters.AddWithValue("@Id", Id);
-                    cnn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-        }
     }
 }

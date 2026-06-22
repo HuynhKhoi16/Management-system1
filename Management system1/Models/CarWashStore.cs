@@ -2,7 +2,7 @@
 
 namespace ManagementSystem1.Models
 {
-    public class CarWashStore : location
+    public class CarWashStore : Location
     {
         public override string Id { get; set; }
         public override string Address { get; set; }
