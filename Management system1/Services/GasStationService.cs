@@ -1,16 +1,29 @@
 ﻿using ManagementSystem1.Models;
+using Microsoft.Data.SqlClient;
+using Management_system1.SQL_Connection;
+using Management_system1.Database_Connection;
 using System;
 
 
 namespace ManagementSystem1.Services
 {
-    class GasStationService
+    public class GasStationService
     {
+
+        private readonly GSDatabase Res;
+        public GasStationService(GSDatabase res)
+        {
+            Res = res;
+        }
+
+
+
         //INTERFACE FOR GAS STATIONS
-        public static void GSMainHub(List<GasStation> gasStations)
+        public void GSMainHub()
         {
             while (true)
             {
+                
                 Console.WriteLine("===Welcome to Gas Station Management===");
                 Console.WriteLine("1. Add Gas Station Location");
                 Console.WriteLine("2. View all location");
@@ -30,16 +43,16 @@ namespace ManagementSystem1.Services
                     case 0:
                         return;
                     case 1:
-                        GasStationService.AddCW(gasStations);
+                        this.AddGS();
                         break;
                     case 2:
-                        GasStationService.ViewAllCW(gasStations);
+                        Res.ViewDatabase();
                         break;
                     case 3:
-                        GasStationService.UpdateCW(gasStations);
+                        this.UpdateGS();
                         break;
                     case 4:
-                        GasStationService.DeleteCW(gasStations);
+                        this.DeleteGS();
                         break;
                     default:
                         Console.WriteLine("Out of range number.");
@@ -54,7 +67,7 @@ namespace ManagementSystem1.Services
 
 
         //GS HELPER
-        public static bool CheckValidId(string id, List<GasStation> gasStations)
+        public bool CheckValidId(string id)
         {
             if (id.Length != 6)
             {
@@ -74,16 +87,11 @@ namespace ManagementSystem1.Services
         }
 
 
-        public static GasStation findId(string id, List<GasStation> gasStations)
-        {
-            GasStation result = gasStations.Find(x => x.Id == id);
-            return result;
-
-        }
+        
 
 
         //1. ADD GAS STATION
-        public static void AddCW(List<GasStation> gasStations)
+        public void AddGS()
         {
             string id;
 
@@ -98,9 +106,10 @@ namespace ManagementSystem1.Services
                     return;
                 }
 
-                if (!CheckValidId(id, gasStations)) { continue; }
+                if (!CheckValidId(id)) { continue; }
 
-                else if (findId(id, gasStations) != null)
+
+                if (Res.IdInDatabase(id))
                 {
                     Console.WriteLine("The Id you enter already exist");
                     continue;
@@ -129,7 +138,8 @@ namespace ManagementSystem1.Services
 
             }
 
-            gasStations.Add(new(id, address, numOfWorkers, profit));
+            GasStation gasStation =  new(id, address, numOfWorkers, profit);
+            Res.AddToDatabase(gasStation);
 
 
             Console.WriteLine($"Gas Station {id} added successfully");
@@ -138,33 +148,12 @@ namespace ManagementSystem1.Services
 
 
         //2. VIEW ALL GAS STATION
-        public static void ViewAllCW(List<GasStation> gasStations)
-        {
-            if (gasStations.Count == 0)
-            {
-                Console.WriteLine("No Gas Station found");
-            }
-            else
-            {
-                Console.WriteLine($"{"GasStationId",-20} {"Address",-25} {"Number of Workers",-22} {"Profit per week",-10}");
-
-                foreach (GasStation gasStation in gasStations.OrderBy(x => x.Id))
-                {
-                    Console.WriteLine($"{gasStation.Id,-20} {gasStation.Address,-25} {gasStation.NumOfWorkers,-22} {gasStation.Profit,-10}");
-                }
-            }
-        }
-
-
-
-
 
 
         //3. UPDATE GAS STATION INFORMATION
-        public static void UpdateCW(List<GasStation> gasStations)
+        public void UpdateGS()
         {
             string id;
-            GasStation gasStation;
             while (true)
             {
                 Console.Write("The Id you need to modify (press 0 to exit): ");
@@ -174,9 +163,8 @@ namespace ManagementSystem1.Services
                     Console.WriteLine("Cancel updating.");
                     return;
                 }
-                if (!CheckValidId(id, gasStations)) { continue; }
-                gasStation = findId(id, gasStations);
-                if (gasStation == null)
+                if (!CheckValidId(id)) { continue; }
+                if (!Res.IdInDatabase(id))
                 {
                     Console.WriteLine("The id is not found, try again.");
                     continue;
@@ -192,9 +180,9 @@ namespace ManagementSystem1.Services
                 Console.Write("The new Id for the Gas Station: ");
                 id2 = Console.ReadLine();
 
-                if (!CheckValidId(id2, gasStations)) { continue; }
+                if (!CheckValidId(id2)) { continue; }
 
-                else if (findId(id, gasStations) != null && id2 != gasStation.Id)
+                else if (Res.IdInDatabase(id) != null && id2 != id)
                 {
                     Console.WriteLine("The Id you enter already exist");
                     continue;
@@ -224,11 +212,8 @@ namespace ManagementSystem1.Services
 
             }
 
-            gasStation.Id = id2;
-            gasStation.Address = address;
-            gasStation.NumOfWorkers = numOfWorkers;
-            gasStation.Profit = "$" + Convert.ToString(profit);
-
+            GasStation gasStation = new GasStation(id2, address, numOfWorkers, profit);
+            Res.UpdateToDatabase(gasStation, id);
 
             Console.WriteLine($"Gas Station {id} was modified successfully");
 
@@ -238,7 +223,7 @@ namespace ManagementSystem1.Services
 
 
         //4. DELETE GAS STATION
-        public static void DeleteCW(List<GasStation> gasStations)
+        public void DeleteGS()
         {
             string id;
             GasStation gasStation;
@@ -251,9 +236,8 @@ namespace ManagementSystem1.Services
                     Console.WriteLine("Cancel deleting.");
                     return;
                 }
-                if (!CheckValidId(id, gasStations)) { continue; }
-                gasStation = findId(id, gasStations);
-                if (gasStation == null)
+                if (!CheckValidId(id)) { continue; }
+                if (!Res.IdInDatabase(id))
                 {
                     Console.WriteLine("The id is not found, try again.");
                     continue;
@@ -261,7 +245,7 @@ namespace ManagementSystem1.Services
                 break;
             }
 
-            gasStations.Remove(gasStation);
+            Res.DeleteFromDatabase(id);
             Console.WriteLine($"Gas Station {id} was removed");
         }
     }

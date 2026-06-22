@@ -4,21 +4,21 @@ using System;
 namespace ManagementSystem1.Models
 {
     //GAS STATION
-    class GasStation : location
+    public class GasStation : location
     {
         public override string Id { get; set; }
         public override string Address { get; set; }
 
         public override int NumOfWorkers { get; set; }
 
-        public string Profit { get; set; }
+        public int Profit { get; set; }
 
         public GasStation(string id, string address, int numOfWorkers, int profit) : base(id, address, numOfWorkers)
         {
             Id = id;
             Address = address;
             NumOfWorkers = numOfWorkers;
-            Profit = "$" + Convert.ToString(profit);
+            Profit = profit;
         }
 
 

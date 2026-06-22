@@ -1,13 +1,26 @@
-﻿using ManagementSystem1.Models;
+﻿using ManagementSystem1.Database_Connection;
+using ManagementSystem1.Models;
+using Microsoft.Data.SqlClient;
 using System;
+using System.ComponentModel;
 
 
 namespace ManagementSystem1.Services
 {
+
     class CarWashStoreService
     {
+        public readonly CWDatabase Res;
+
+        public CarWashStoreService(CWDatabase res)
+        {
+            Res = res;
+        }
+
+
+
         //CAR WASH STORE INTERFACE
-        public static void CWMainHub(List<CarWashStore> carWashStores)
+        public void CWMainHub(List<CarWashStore> carWashStores)
         {
             while (true)
             {
@@ -30,16 +43,16 @@ namespace ManagementSystem1.Services
                     case 0:
                         return;
                     case 1:
-                        CarWashStoreService.AddGS(carWashStores);
+                        this.AddCW();
                         break;
                     case 2:
-                        CarWashStoreService.ViewAllGS(carWashStores);
+                        Res.ViewDatabase();
                         break;
                     case 3:
-                        CarWashStoreService.UpdateGS(carWashStores);
+                        this.UpdateCW();
                         break;
                     case 4:
-                        CarWashStoreService.DeleteGS(carWashStores);
+                        this.DeleteCW();
                         break;
                     default:
                         Console.WriteLine("Out of range number.");
@@ -51,7 +64,7 @@ namespace ManagementSystem1.Services
 
 
         //CW HELPER
-        public static bool CheckValidId(string id, List<CarWashStore> carWashStores)
+        public static bool CheckValidId(string id)
         {
             if (id.Length != 6)
             {
@@ -71,16 +84,9 @@ namespace ManagementSystem1.Services
         }
 
 
-        public static CarWashStore findId(string id, List<CarWashStore> carWashStores)
-        {
-            CarWashStore result = carWashStores.Find(x => x.Id == id);
-            return result;
 
-        }
-
-
-        //1. ADD GAS STATION
-        public static void AddGS(List<CarWashStore> carWashStores)
+        //1. ADD CAR WASH
+        public void AddCW()
         {
             string id;
 
@@ -95,9 +101,9 @@ namespace ManagementSystem1.Services
                     return;
                 }
 
-                if (!CheckValidId(id, carWashStores)) { continue; }
+                if (!CheckValidId(id)) { continue; }
 
-                else if (findId(id, carWashStores) != null)
+                else if (Res.IdInDatabase(id) != null)
                 {
                     Console.WriteLine("The Id you enter already exist");
                     continue;
@@ -143,7 +149,11 @@ namespace ManagementSystem1.Services
 
             }
 
-            carWashStores.Add(new(id, address, numOfWorkers, rating, profit));
+            CarWashStore carWashStore = new(id, address, numOfWorkers, rating, profit);
+
+            Res.AddToDatabase(carWashStore);
+
+            //carWashStores.Add(carWashStore);
 
 
             Console.WriteLine($"Car Wash {id} added successfully");
@@ -151,31 +161,17 @@ namespace ManagementSystem1.Services
 
 
 
-        //2. VIEW ALL GAS STATION
-        public static void ViewAllGS(List<CarWashStore> carWashStores)
-        {
-            if (carWashStores.Count == 0)
-            {
-                Console.WriteLine("No Car Wash found");
-            }
-            else
-            {
-                Console.WriteLine($"{"CarWashID",-20} {"Address",-25} {"Number of Workers",-22} {"Rating", -10} {"Profit per week",-10}");
-
-                foreach (CarWashStore carWashStore in carWashStores.OrderBy(x => x.Id))
-                {
-                    Console.WriteLine($"{carWashStore.Id,-20} {carWashStore.Address,-25} {carWashStore.NumOfWorkers,-22} {carWashStore.Rating, -10} {carWashStore.Profit,-10}");
-                }
-            }
-        }
 
 
 
-        //3. UPDATE GAS STATION INFORMATION
-        public static void UpdateGS(List<CarWashStore> carWashStores)
+        //2. VIEW ALL CAR WASH
+
+
+
+        //3. UPDATE CAR WASH INFORMATION
+        public void UpdateCW()
         {
             string id;
-            CarWashStore carWashStore ;
             while (true)
             {
                 Console.Write("The Id you need to modify (press 0 to exit): ");
@@ -185,9 +181,8 @@ namespace ManagementSystem1.Services
                     Console.WriteLine("Cancel updating.");
                     return;
                 }
-                if (!CheckValidId(id, carWashStores)) { continue; }
-                carWashStore = findId(id, carWashStores);
-                if (carWashStore == null)
+                if (!CheckValidId(id)) { continue; }
+                if (!Res.IdInDatabase(id))
                 {
                     Console.WriteLine("The id is not found, try again.");
                     continue;
@@ -203,9 +198,9 @@ namespace ManagementSystem1.Services
                 Console.Write("The new Id for the Car Wash Location: ");
                 id2 = Console.ReadLine();
 
-                if (!CheckValidId(id2, carWashStores)) { continue; }
+                if (!CheckValidId(id2)) { continue; }
 
-                else if (findId(id, carWashStores) != null && id2 != carWashStore.Id)
+                else if (Res.IdInDatabase(id) != null && id2 != id)
                 {
                     Console.WriteLine("The Id you enter already exist");
                     continue;
@@ -248,22 +243,46 @@ namespace ManagementSystem1.Services
 
             }
 
-            carWashStore.Id = id2;
-            carWashStore.Address = address;
-            carWashStore.NumOfWorkers = numOfWorkers;
-            carWashStore.Rating = rating;
-            carWashStore.Profit = "$" + Convert.ToString(profit);
+            Res.DeleteFromDatabase(id);
+
+            
+            Console.WriteLine($"Car Wash {id} was modified successfully");
+
+        }
 
 
-            Console.WriteLine($"Gas Station {id} was modified successfully");
+        
+        //3.1. UPDATE VALUE TO DATABASE
+        static void UpdateCW(string oldId, CarWashStore carWashStore)
+        {
+            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
+            using(SqlConnection cnn = new SqlConnection(connectionString)) {
+                string sql = "Update CarWashStores" +
+                              "Set Id = @Id" +
+                              "Address = @Address" +
+                              "NumOfWorker = @NumOfWorker" +
+                              "Rating = @Rating" +
+                              "Profit = @Profit" +
+                              "where oldId = @oldId";
+                using(SqlCommand cmd = new SqlCommand(sql, cnn)) { 
+                    cmd.Parameters.AddWithValue("@id", carWashStore.Id);
+                    cmd.Parameters.AddWithValue("@Address", carWashStore.Address);
+                    cmd.Parameters.AddWithValue("@NumOfWorkers", carWashStore.NumOfWorkers);
+                    cmd.Parameters.AddWithValue("@Rating", carWashStore.Rating);
+                    cmd.Parameters.AddWithValue("@Profit", carWashStore.Profit);
+                    cmd.Parameters.AddWithValue("@oldId", oldId);
 
+                    cnn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
 
 
 
         //4. DELETE GAS STATION
-        public static void DeleteGS(List<CarWashStore> carWashStores)
+        public void DeleteCW()
         {
             string id;
             CarWashStore carWashStore;
@@ -276,9 +295,8 @@ namespace ManagementSystem1.Services
                     Console.WriteLine("Cancel deleting.");
                     return;
                 }
-                if (!CheckValidId(id, carWashStores)) { continue; }
-                carWashStore = findId(id, carWashStores);
-                if (carWashStore == null)
+                if (!CheckValidId(id)) { continue; }
+                if (!Res.IdInDatabase(id))
                 {
                     Console.WriteLine("The id is not found, try again.");
                     continue;
@@ -286,8 +304,26 @@ namespace ManagementSystem1.Services
                 break;
             }
 
-            carWashStores.Remove(carWashStore);
+            //carWashStores.Remove(carWashStore);
+            DeleteFromDatabase(id);
             Console.WriteLine($"Gas Station {id} was removed");
+        }
+
+
+
+        //4.1 DELETE FROM DATABASE
+        static void DeleteFromDatabase(string Id)
+        {
+            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
+            using(SqlConnection cnn = new SqlConnection(connectionString)) {
+                string sql = "Delete from CarWashStores" +
+                            "where Id = @Id";
+                using(SqlCommand cmd = new SqlCommand(sql, cnn)) {
+                    cmd.Parameters.AddWithValue("@Id", Id);
+                    cnn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
