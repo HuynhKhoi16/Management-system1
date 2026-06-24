@@ -1,5 +1,4 @@
 ﻿
-using Management_system1.Database_Connection;
 using ManagementSystem1.Database_Connection;
 using ManagementSystem1.Models;
 
@@ -10,7 +9,7 @@ using System.Text;
 
 namespace Management_system1.SQL_Connection
 {
-    class SqlGasStation : GSDatabase
+    class SqlGasStation : IDatabase<GasStation>
     {
         string ConnectionString;
         string tableName;
@@ -43,7 +42,7 @@ namespace Management_system1.SQL_Connection
             using (SqlConnection cnn = new SqlConnection(ConnectionString))
             {
                 string sql = $"Insert into {tableName} " +
-                            "VALUES {@id, @address, @numOfWorker, @profit}";
+                            "VALUES (@id, @address, @numOfWorker, @profit)";
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 {
                     cmd.Parameters.AddWithValue("@id", gasStation.Id);
@@ -92,7 +91,7 @@ namespace Management_system1.SQL_Connection
                                                     "Address = @address, " +
                                                     "NumofWorkers = @numOfWorker, " +
                                                     "Profit = @profit " +
-                                                    "where Id = @oldId}";
+                                                    "where Id = @oldId";
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 {
                     cmd.Parameters.AddWithValue("@id", gasStation.Id);

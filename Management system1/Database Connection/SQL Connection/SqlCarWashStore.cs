@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Management_system1.SQL_Connection
 {
-    public class SqlCarWashStore : CWDatabase
+    public class SqlCarWashStore : IDatabase<CarWashStore>
     {
         private readonly string ConnectionString;
         private readonly string TableName;
@@ -38,14 +38,14 @@ namespace Management_system1.SQL_Connection
             using (SqlConnection cnn = new SqlConnection(ConnectionString))
             {
                 string sql = $"Insert into {TableName} " +
-                            "VALUES {@id, @address, @numOfWorker, @profit}";
+                            "VALUES (@id, @address, @numOfWorker, @rating, @profit)";
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 {
                     cmd.Parameters.AddWithValue("@id", carWashStore.Id);
                     cmd.Parameters.AddWithValue("@address", carWashStore.Address);
                     cmd.Parameters.AddWithValue("@numOfWorker", carWashStore.NumOfWorkers);
+                    cmd.Parameters.AddWithValue("@rating", carWashStore.Rating);
                     cmd.Parameters.AddWithValue("@profit", carWashStore.Profit);
-
                     cnn.Open();
                     cmd.ExecuteNonQuery();
                 }
@@ -86,7 +86,7 @@ namespace Management_system1.SQL_Connection
                                                     "Address = @address, " +
                                                     "NumofWorkers = @numOfWorker, " +
                                                     "Profit = @profit " +
-                                                    "where Id = @oldId}";
+                                                    "where Id = @oldId";
                 using (SqlCommand cmd = new SqlCommand(sql, cnn))
                 {
                     cmd.Parameters.AddWithValue("@id", carWashStore.Id);

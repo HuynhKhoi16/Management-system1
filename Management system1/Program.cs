@@ -1,10 +1,9 @@
 ﻿
-using Management_system1.Database_Connection;
+using Management_system1.Menu_UI;
 using Management_system1.SQL_Connection;
 using ManagementSystem1.Database_Connection;
 using ManagementSystem1.Models;
 using ManagementSystem1.Services;
-using ManagementSystem1.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using System;
@@ -19,16 +18,19 @@ namespace ManagementSystem1
         {
 
             string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
-            CWDatabase CWRepo = new SqlCarWashStore(connectionString, "CarWashstores");
-            GSDatabase GSRepo = new SqlGasStation(connectionString, "GasStations");
-            CarWashStoreService CWService = new CarWashStoreService(CWRepo);
-            GasStationService GSService = new GasStationService(GSRepo);
+            IDatabase<CarWashStore> CWRepo = new SqlCarWashStore(connectionString, "CarWashstores");
+            IDatabase<GasStation> GSRepo = new SqlGasStation(connectionString, "GasStations");
+            LocationService<CarWashStore> CWService = new CarWashStoreService(CWRepo);
+            LocationService<GasStation> GSService = new GasStationService(GSRepo);
+            UI carWash = new CW_UI(CWService);
+            UI gasStation = new GS_UI(GSService);
 
 
             //INTERFACE FOR LOCATIONS
 
             while (true)
             {
+                Console.WriteLine("");
                 Console.WriteLine("====Welcome to Location Management====");
                 Console.WriteLine("1. Gas Station");
                 Console.WriteLine("2. Car Wash Location");
@@ -46,10 +48,10 @@ namespace ManagementSystem1
                     case 0:
                         return;
                     case 1:
-                        GSService.GSMainHub();
+                        gasStation.MainHub();
                         break;
                     case 2:
-                        CWService.CWMainHub();
+                        carWash.MainHub();
                         break;
                     default:
                         Console.WriteLine("Out of range number.");

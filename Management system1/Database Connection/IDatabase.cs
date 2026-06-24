@@ -5,12 +5,12 @@ using System.Text;
 
 namespace ManagementSystem1.Database_Connection
 {
-    public interface CWDatabase
+    public interface IDatabase<T> where T : class
     {
         bool IdInDatabase(string id);
-        void AddToDatabase(CarWashStore carWashStore);
+        void AddToDatabase(T Entity);
         void ViewDatabase();
-        void UpdateToDatabase(CarWashStore carWashStore, string oldId);
+        void UpdateToDatabase(T Entity, string oldId);
         void DeleteFromDatabase(String Id);
 
     }
