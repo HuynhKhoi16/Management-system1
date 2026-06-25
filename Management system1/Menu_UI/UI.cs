@@ -6,8 +6,6 @@ namespace Management_system1.Menu_UI
 {
     public interface UI
     {
-        bool IdInDatabase(string Id);
-        bool CheckValidId(string id);
         void MainHub();
     }
 }

@@ -17,24 +17,7 @@ namespace Management_system1.Menu_UI
 
 
         //CW HELPER
-        public bool CheckValidId(string id)
-        {
-            if (id.Length != 6)
-            {
-                Console.WriteLine("Invalid Id length, must have 6 characters start with CW and then 4 numbers");
 
-                return false;
-            }
-            int check;
-            if (id.Substring(0, 2) != "CW" || !int.TryParse(id.Substring(2), out check))
-            {
-                Console.WriteLine("Invalid ID, must start with CW and then 4 numbers");
-                return false;
-            }
-
-
-            else return true;
-        }
 
 
         public bool IdInDatabase(string id)

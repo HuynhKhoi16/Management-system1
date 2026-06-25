@@ -16,31 +16,6 @@ namespace Management_system1.Menu_UI
             _service = service;
         }
 
-        public bool IdInDatabase(string id)
-        {
-            return _service.IdInDatabase(id);
-        }
-
-        public bool CheckValidId(string id)
-        {
-            if (id.Length != 6)
-            {
-                Console.WriteLine("Invalid Id length, must have 6 characters start with GS and then 4 numbers");
-
-                return false;
-            }
-            int check;
-            if (id.Substring(0, 2) != "GS" || !int.TryParse(id.Substring(2), out check))
-            {
-                Console.WriteLine("Invalid ID, must start with GS and then 4 numbers");
-                return false;
-            }
-
-
-            else return true;
-        }
-
-
         public void MainHub()
         {
             while (true)
@@ -65,57 +40,23 @@ namespace Management_system1.Menu_UI
                     case 0:
                         return;
                     case 1:
-                        {string id;
-
-                        while (true)
                         {
-                            Console.Write("The Id for the new Gas Station( Press 0 to exit ): ");
-                            id = Console.ReadLine();
+                            try{
+                                string id = InputHelper.GetGS("Enter the Id for the new GasStation");
 
-                            if (id == "0")
-                            {
-                                Console.WriteLine("Cancel adding.");
-                                return;
+                                string address = InputHelper.GetString("The address of the Gas Station: ");
+
+                                int numOfWorkers = InputHelper.GetInt("The number of workers: ");
+
+                                int profit = InputHelper.GetInt("The profit per week: ");
+
+                                _service.Add(new GasStation(id, address, numOfWorkers, profit));
+
                             }
-
-                            if (!CheckValidId(id)) 
-                                {
-                                    continue; 
-                                }
-
-                            if (IdInDatabase(id))
+                            catch(Exception ex)
                             {
-                                Console.WriteLine("The Id you enter already exist, try a different Id.");
-                                
-                                continue;
+                                Console.WriteLine($"Error: {ex.Message}");
                             }
-
-                            break;
-                        }
-
-
-                        Console.Write("The address of the Gas Station: ");
-                        string address = Console.ReadLine();
-
-                        Console.Write("The number of workers: ");
-                        int numOfWorkers;
-                        while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
-                        {
-                            Console.Write("Invalid entry, re-enter the number: ");
-
-                        }
-
-                        Console.Write("The profit per week: ");
-                        int profit;
-                        while (!int.TryParse(Console.ReadLine(), out profit) || profit < 0)
-                        {
-                            Console.Write("Invalid entry, re-enter the number: ");
-
-                        }
-
-                        GasStation gasStation = new(id, address, numOfWorkers, profit);
-                            _service.Add(gasStation);
-
                             break;
                         }
 
@@ -129,75 +70,28 @@ namespace Management_system1.Menu_UI
 
 
                     case 3:
-                        {string id;
-                        while (true)
                         {
-                            Console.Write("The Id you need to modify (press 0 to exit): ");
-                            id = Console.ReadLine();
-                            if (id == "0")
-                            {
-                                Console.WriteLine("Cancel updating.");
-                                return;
+                            try{
+                                string id = InputHelper.GetGS("Enter the Id of the Gas Station you want to modify: ");
+
+                                string id2 = InputHelper.GetGS("The new Id for the Gas Station: ");
+
+
+
+
+                                string address = InputHelper.GetString("The address of the Gas Station: ");
+
+                                int numOfWorkers = InputHelper.GetInt("The number of workers: ");
+
+                                int profit = InputHelper.GetInt("The profit per week: ");
+    
+                                _service.Update(new GasStation(id2, address, numOfWorkers, profit), id);
+                                break;
                             }
-                            if (!CheckValidId(id)) 
-                             {
-                                continue; 
-                             }
-
-                            if (!IdInDatabase(id))
+                            catch(Exception ex)
                             {
-                                Console.WriteLine("The Id you enter can't be found in the database, try the a different one.");
-                                continue;
+                                Console.WriteLine($"Error: {ex.Message}");
                             }
-
-
-                            break;
-                        }
-
-
-                        string id2;
-
-                        while (true)
-                        {
-                            Console.Write("The new Id for the Gas Station: ");
-                            id2 = Console.ReadLine();
-
-                            if (!CheckValidId(id2)) 
-                            {
-                                continue; 
-                            }
-
-                            if(IdInDatabase(id2) && id2 != id)
-                                {
-                                    Console.WriteLine("The Id you enter is already used by another person, try the different one.");
-                                    continue;
-                                }
-
-                            break;
-                        }
-
-
-                        Console.Write("The new address of the Gas Station: ");
-                        string address = Console.ReadLine();
-
-                        Console.Write("The new number of workers: ");
-                        int numOfWorkers;
-                        while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
-                        {
-                            Console.Write("Invalid entry, re-enter the number: ");
-
-                        }
-
-                        Console.Write("The profit per week: ");
-                        int profit;
-                        while (!int.TryParse(Console.ReadLine(), out profit) || profit < 0)
-                        {
-                            Console.Write("Invalid entry, re-enter the number: ");
-
-                        }
-
-                        GasStation gasStation = new GasStation(id2, address, numOfWorkers, profit);
-                            _service.Update(gasStation,id);
                             break;
                         }
                     
