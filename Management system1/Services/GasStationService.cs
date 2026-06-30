@@ -1,67 +1,53 @@
 ﻿using ManagementSystem1.Models;
 using Microsoft.Data.SqlClient;
-using Management_system1.SQL_Connection;
 using System;
-using ManagementSystem1.Database_Connection;
 
 
 namespace ManagementSystem1.Services
 {
     public class GasStationService : LocationService<GasStation>
     {
+        private readonly AppDbContext _db;
 
-        private readonly IDatabase<GasStation> Database;
-        public GasStationService(IDatabase<GasStation> database)
+        public GasStationService(AppDbContext db)
         {
-            Database = database;
+            _db = db;
         }
-
-
-
-        //INTERFACE FOR GAS STATIONS
-        
-
-
-
-
-
-
-        //GS HELPER
-        
-        public bool IdInDatabase(string id)
-        {
-            return Database.IdInDatabase(id);
-            
-        }
-
-        
-
 
         //1. ADD GAS STATION
         public void Add(GasStation gasStation)
         {
-            Database.AddToDatabase(gasStation);
-            Console.WriteLine($"Gas Station {gasStation.Id} added successfully");
+
+            if (_db.GasStations.Any(v => v.Id == gasStation.Id)) throw new Exception("The id is already used");
+            _db.GasStations.Add(gasStation);
+            _db.SaveChanges();
         }
 
 
 
         //2. VIEW ALL GAS STATION
 
-        public void View()
+        public List<GasStation> View()
         {
-            Database.ViewDatabase();
+            return _db.GasStations.ToList();
         }
 
 
         //3. UPDATE GAS STATION INFORMATION
-        public void Update(GasStation gasStation, string oldId)
+        public void Update(GasStation gasStation)
         {
-            Database.UpdateToDatabase(gasStation, oldId);
+            var newGasStation = _db.GasStations.FirstOrDefault(s => s.Id == gasStation.Id);
+            if (newGasStation != null)
+            {
+                _db.Entry(newGasStation).CurrentValues.SetValues(gasStation);
+                _db.SaveChanges();
+            }
+            else throw new Exception("The id is not found.");
 
-            Console.WriteLine($"Gas Station {oldId} was modified successfully");
+            Console.WriteLine($"Gas Station {gasStation.Id} was modified successfully");
 
         }
+        
 
 
 
@@ -69,9 +55,15 @@ namespace ManagementSystem1.Services
         //4. DELETE GAS STATION
         public void Delete(string id)
         {
-            Database.DeleteFromDatabase(id);
+            var gasStation = _db.GasStations.FirstOrDefault(s =>s.Id == id);
+            if (gasStation != null)
+            {
+                _db.Remove(gasStation);
+                _db.SaveChanges();
+            }
+            else throw new Exception("The id is not found.");
+            
             Console.WriteLine($"Gas Station {id} was removed");
-
         }
-    }
+}
 }

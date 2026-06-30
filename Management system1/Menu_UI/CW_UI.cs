@@ -16,14 +16,7 @@ namespace Management_system1.Menu_UI
         }
 
 
-        //CW HELPER
 
-
-
-        public bool IdInDatabase(string id)
-        {
-            return _service.IdInDatabase(id);
-        }
 
         public void MainHub()
         {
@@ -53,202 +46,63 @@ namespace Management_system1.Menu_UI
 
                     case 1:
                         {
-                            string id;
-
-                            while (true)
+                            try
                             {
-                                Console.Write("The Id for the new Car Wash location( Press 0 to exit ): ");
-                                id = Console.ReadLine();
+                                string id = InputHelper.GetCW("Enter the Id for the new Car Wash: ");
+                                string street = InputHelper.GetString("Enter the address of the new location: ");
+                                int numOfWorkers = InputHelper.GetInt("The number of workers in this locations: ");
+                                decimal rating = InputHelper.GetRating("The rating of the location: ");
+                                int profit = InputHelper.GetInt("The profit per week: ");
+                                _service.Add(new CarWashStore(id, street, numOfWorkers, rating, profit));
+                                Console.WriteLine($"Car Wash {id} added successfully");
 
-                                if (id == "0")
-                                {
-                                    Console.WriteLine("Cancel adding.");
-                                    return;
-                                }
-
-                                if (!CheckValidId(id)) 
-                                {
-                                    continue; 
-                                }
-
-
-                                if (IdInDatabase(id))
-                                {
-                                    Console.WriteLine("The Id you enter already exist, try a different Id.");
-                                    continue;
-                                }
-
-
-                                break;
                             }
-
-
-                            Console.Write("The address of the Car Wash location: ");
-                            string address = Console.ReadLine();
-
-
-
-                            double rating;
-                            while (true)
+                            catch (Exception ex)
                             {
-                                Console.Write("Enter the current rating of the location: ");
-                                if (!double.TryParse(Console.ReadLine(), out rating) || rating < 0 || rating > 5)
-                                {
-                                    Console.WriteLine("Invalid entry, the number must be between 0 and 5)");
-                                    continue;
-                                }
-                                break;
+                                Console.WriteLine($"Error: {ex.Message}");
                             }
 
-
-
-
-                            Console.Write("The number of workers: ");
-                            int numOfWorkers;
-                            while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
-                            {
-                                Console.Write("Invalid entry, re-enter the number: ");
-
-                            }
-
-                            Console.Write("The profit per week: ");
-                            int profit;
-                            while (!int.TryParse(Console.ReadLine(), out profit) || profit < 0)
-                            {
-                                Console.Write("Invalid entry, re-enter the number: ");
-
-                            }
-
-                            CarWashStore carWashStore = new(id, address, numOfWorkers, rating, profit);
-                            _service.Add(carWashStore);
-
-                                break;
-                            }
+                            break;
+                        }
 
 
 
                     case 2:
-                        _service.View();
-                        break;
-
-
-
+                        List<CarWashStore> list = _service.View();
+                        Console.WriteLine($"{"Id",-8} {"Address",-20} {"Number of workers",-20} {"Rating",-5} {"Profit",-5}");
+                        foreach (var i in list)
+                        {
+                            Console.WriteLine($"{i.Id,-8} {i.Address,-20} {i.NumOfWorkers,-20} {i.Rating, -5} {i.Profit,-5}");
+                        }
+                        break; 
 
                     case 3:
                         {
-                            string id;
-                            while (true)
+                            try
                             {
-                                Console.Write("The Id you need to modify (press 0 to exit): ");
-                                id = Console.ReadLine();
-                                if (id == "0")
-                                {
-                                    Console.WriteLine("Cancel updating.");
-                                    
-                                    return;
-                                }
-                                if (!CheckValidId(id)) 
-                                {
-                                    continue; 
-                                }
-
-
-                                if (!IdInDatabase(id))
-                                {
-                                    Console.WriteLine("The Id you enter cannot be found, try a different Id.");
-                                    continue;
-                                }
-                                break;
+                                string id = InputHelper.GetCW("Enter the id you want to update: ");
+                                string address = InputHelper.GetCW("Enter the new Address: ");
+                                int numOfWorkers = InputHelper.GetInt("Enter the new number of employees: ");
+                                decimal rating = InputHelper.GetRating("Enter the new rating of the location: ");
+                                int profit = InputHelper.GetInt("Enter the new profit per week: ");
+                                _service.Update(new CarWashStore(id, address, numOfWorkers, rating, profit));
                             }
-
-                            
-
-                            string id2;
-
-                            while (true)
-                            {
-                                Console.Write("The new Id for the Car Wash Location: ");
-                                id2 = Console.ReadLine();
-
-                                if (!CheckValidId(id2)) 
-                                {
-                                    continue; 
-                                }
-
-                                if (IdInDatabase(id2) && id != id2)
-                                {
-                                    Console.WriteLine("The new Id you enter already exist, try a different Id.");
-                                    continue;
-
-                                }
-
-
-                                break;
+                            catch(Exception ex) {
+                                Console.WriteLine($"Error: {ex.Message}");
                             }
-
-
-                            Console.Write("The new address of the Car Wash location: ");
-                            string address = Console.ReadLine();
-
-                            Console.Write("The new number of workers: ");
-                            int numOfWorkers;
-                            while (!int.TryParse(Console.ReadLine(), out numOfWorkers) || numOfWorkers < 0)
-                            {
-                                Console.Write("Invalid entry, re-enter the number: ");
-
-                            }
-
-
-                            double rating;
-                            while (true)
-                            {
-                                Console.Write("Enter the current rating of the location: ");
-                                if (!double.TryParse(Console.ReadLine(), out rating) || rating < 0 || rating > 5)
-                                {
-                                    Console.WriteLine("Invalid entry, the number must be between 0 and 5)");
-                                    continue;
-                                }
-                                break;
-                            }
-
-                            Console.Write("The profit per week: ");
-                            int profit;
-                            while (!int.TryParse(Console.ReadLine(), out profit) || profit < 0)
-                            {
-                                Console.Write("Invalid entry, re-enter the number: ");
-
-                            }
-
-                            CarWashStore carWashStore = new CarWashStore(id2, address,numOfWorkers,rating,profit);
-                            _service.Update(carWashStore, id);
-                                break;
-                         }
+                            break;
+                        }
                     case 4:
                         {
-                            string id;
-                            CarWashStore carWashStore;
-                            while (true)
+                            try
                             {
-                                Console.Write("The Id you need to modify (0 to cancel): ");
-                                id = Console.ReadLine();
-                                if (id == "0")
-                                {
-                                    Console.WriteLine("Cancel deleting.");
-                                    return;
-                                }
-                                if (!CheckValidId(id)) 
-                                {
-                                    continue; 
-                                }
-                                if (!IdInDatabase(id))
-                                {
-                                    Console.WriteLine("The Id you enter cannot be found, try a different Id.");
-                                    return;
-                                }
-
-                                break;
+                                string id = InputHelper.GetCW("Enter the id of the location you want to delete: ");
+                                _service.Delete(id);
                             }
-                            _service.Delete(id);
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine($"Error: {ex.Message}");
+                            }
                             break;
                         }
                         

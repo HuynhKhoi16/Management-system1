@@ -2,12 +2,13 @@
 
 namespace ManagementSystem1.Models
 {
-    public abstract class Location
+    public class Location
     {
-        public abstract string Id { get; set; }
-        public abstract string Address { get; set; }
-        public abstract int NumOfWorkers {  get; set; }
+        public virtual string Id { get; set; }
+        public virtual string Address { get; set; }
+        public virtual int NumOfWorkers {  get; set; }
 
+        public Location() { }
         public Location(string id, string address, int numOfWorkers)
         {
             Id = id;

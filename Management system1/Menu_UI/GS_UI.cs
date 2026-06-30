@@ -1,4 +1,4 @@
-﻿using ManagementSystem1.Database_Connection;
+﻿
 using ManagementSystem1.Models;
 using ManagementSystem1.Services;
 using System;
@@ -63,7 +63,12 @@ namespace Management_system1.Menu_UI
 
 
                     case 2:
-                        _service.View();
+                        List <GasStation> list = _service.View();
+                        Console.WriteLine($"{"Id",-5} {"Address",-20} {"Number of workers",-10} {"Profit",-5}");
+                        foreach(var i in list)
+                        {
+                            Console.WriteLine($"{i.Id,-5} {i.Address,-20} {i.NumOfWorkers,-10} {i.Profit,-5}");
+                        }
                         break;
 
 
@@ -74,18 +79,13 @@ namespace Management_system1.Menu_UI
                             try{
                                 string id = InputHelper.GetGS("Enter the Id of the Gas Station you want to modify: ");
 
-                                string id2 = InputHelper.GetGS("The new Id for the Gas Station: ");
+                                string address = InputHelper.GetString("The new address of the Gas Station: ");
 
-
-
-
-                                string address = InputHelper.GetString("The address of the Gas Station: ");
-
-                                int numOfWorkers = InputHelper.GetInt("The number of workers: ");
+                                int numOfWorkers = InputHelper.GetInt("The new number of workers: ");
 
                                 int profit = InputHelper.GetInt("The profit per week: ");
     
-                                _service.Update(new GasStation(id2, address, numOfWorkers, profit), id);
+                                _service.Update(new GasStation(id, address, numOfWorkers, profit));
                                 break;
                             }
                             catch(Exception ex)
@@ -99,34 +99,18 @@ namespace Management_system1.Menu_UI
                     
                     
                     case 4:
-                       { string id;
-                        GasStation gasStation;
-                        while (true)
                         {
-                            Console.Write("The Id you need to modify (0 to cancel): ");
-                            id = Console.ReadLine();
-                            if (id == "0")
+                            try
                             {
-                                Console.WriteLine("Cancel deleting.");
-                                return;
+                                string id = InputHelper.GetGS("The id of the location you want to delete: ");
+                                _service.Delete(id);
                             }
-                            if (!CheckValidId(id)) 
+                            catch(Exception ex)
                             {
-                                continue; 
+                                Console.WriteLine($"Error: {ex.Message}");
                             }
-
-
-                            if(!IdInDatabase(id))
-                            {
-                                Console.WriteLine("The Id you enter cannot be found, try a different Id.");
-                                continue;
-                            }
-
-                                break;
-                        }
-                            _service.Delete(id);
                             break;
-                        }
+                       }
                     
 
                     default:

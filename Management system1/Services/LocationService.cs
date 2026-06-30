@@ -7,11 +7,10 @@ namespace ManagementSystem1.Services
 {
     interface LocationService<T> where T : class
     {
-        bool IdInDatabase(string id);
 
         void Add(T entity);
-        void View();
-        void Update(T entity, string oldId);
+        List <T> View();
+        void Update(T entity);
         void Delete(string id);
         
     }

@@ -1,7 +1,5 @@
 ﻿
 using Management_system1.Menu_UI;
-using Management_system1.SQL_Connection;
-using ManagementSystem1.Database_Connection;
 using ManagementSystem1.Models;
 using ManagementSystem1.Services;
 using Microsoft.Data.SqlClient;
@@ -17,13 +15,11 @@ namespace ManagementSystem1
         static void Main(string[] args)
         {
 
-            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=ManagementSystem;Integrated Security=True;Encrypt=True;";
-            IDatabase<CarWashStore> CWRepo = new SqlCarWashStore(connectionString, "CarWashstores");
-            IDatabase<GasStation> GSRepo = new SqlGasStation(connectionString, "GasStations");
-            LocationService<CarWashStore> CWService = new CarWashStoreService(CWRepo);
-            LocationService<GasStation> GSService = new GasStationService(GSRepo);
-            UI carWash = new CW_UI(CWService);
-            UI gasStation = new GS_UI(GSService);
+            var db = new AppDbContext();
+            LocationService < GasStation > GSService = new GasStationService(db);
+            LocationService <CarWashStore> CWService = new CarWashStoreService(db);
+            UI GSMenu = new GS_UI(GSService);
+            UI CWMenu = new CW_UI(CWService);
 
 
             //INTERFACE FOR LOCATIONS
@@ -48,10 +44,10 @@ namespace ManagementSystem1
                     case 0:
                         return;
                     case 1:
-                        gasStation.MainHub();
+                        GSMenu.MainHub();
                         break;
                     case 2:
-                        carWash.MainHub();
+                        CWMenu.MainHub();
                         break;
                     default:
                         Console.WriteLine("Out of range number.");

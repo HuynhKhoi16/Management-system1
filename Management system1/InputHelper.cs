@@ -77,13 +77,13 @@ namespace Management_system1
 
         }
 
-        public static double GetRating(string prompt)
+        public static decimal GetRating(string prompt)
         {
-            double rating;
+            decimal rating;
             while (true)
             {
                 Console.Write(prompt);
-                if(double.TryParse(Console.ReadLine(), out rating) && rating > 0 && rating < 5) return Math.Round(rating,1);
+                if(decimal.TryParse(Console.ReadLine(), out rating) && rating > 0 && rating < 5) return Math.Round(rating,1);
                 Console.WriteLine("\nError:invalid input, The value must be a decimal between 0 and 5.\n");
             }
         }

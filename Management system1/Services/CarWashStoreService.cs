@@ -1,4 +1,4 @@
-﻿using ManagementSystem1.Database_Connection;
+﻿
 using ManagementSystem1.Models;
 using Microsoft.Data.SqlClient;
 using System;
@@ -11,54 +11,42 @@ namespace ManagementSystem1.Services
 
     class CarWashStoreService : LocationService<CarWashStore>
     {
-        public readonly IDatabase<CarWashStore> Res;
+        private readonly AppDbContext _db;
 
-        public CarWashStoreService(IDatabase<CarWashStore> res)
+        public CarWashStoreService(AppDbContext db)
         {
-            Res = res;
+            _db = db;
         }
-
-
-        public bool IdInDatabase(String id)
-        {
-            return Res.IdInDatabase(id);
-        }
-
-
 
         //1. ADD CAR WASH
         public void Add(CarWashStore carWashStore)
         {
-            Res.AddToDatabase(carWashStore);
-
-            Console.WriteLine($"Car Wash {carWashStore.Id} added successfully");
+            if (_db.CarWashStores.Any(s => s.Id == carWashStore.Id)) throw new Exception("The id is already used.");
+            _db.CarWashStores.Add(carWashStore);
+            _db.SaveChanges();
         }
 
 
-
-
-
-
         //2. VIEW ALL CAR WASH
-        public void View()
+        public List<CarWashStore> View()
         {
-            Res.ViewDatabase();
+            return _db.CarWashStores.ToList();
         }
 
 
         //3. UPDATE CAR WASH INFORMATION
-        public void Update(CarWashStore carWashStore, string oldId)
+        public void Update(CarWashStore updatedCarWashStore)
         {
 
-     
-
-
+            var carWash = _db.CarWashStores.FirstOrDefault(s => s.Id == updatedCarWashStore.Id);
+            if (carWash != null)
+            {
+                _db.Entry(carWash).CurrentValues.SetValues(updatedCarWashStore);
+                _db.SaveChanges();
+            }
+            else throw new Exception("The id is not found.");
             
-
-            Res.UpdateToDatabase(carWashStore, oldId);
-
-            
-            Console.WriteLine($"Car Wash {oldId} was modified successfully");
+            Console.WriteLine($"Car Wash {updatedCarWashStore.Id} was modified successfully");
 
         }
 
@@ -66,8 +54,15 @@ namespace ManagementSystem1.Services
         //4. DELETE GAS STATION
         public void Delete(string id)
         {
-            Res.DeleteFromDatabase(id);
-            Console.WriteLine($"Gas Station {id} was removed");
+            var CarWash = _db.CarWashStores.FirstOrDefault(v=>v.Id == id);
+            if (CarWash != null)
+            {
+                _db.CarWashStores.Remove(CarWash);
+                _db.SaveChanges();
+            }
+            else throw new Exception("The id is not found");
+            
+            Console.WriteLine($"The location with the id {id} has been removed");
         }
     }
 }
