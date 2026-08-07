@@ -1,31 +1,29 @@
-name: Node.js CI
+name: .NET CI
 
-# Định nghĩa thời điểm CI tự động chạy
 on:
   push:
-    branches: [ "main", "master" ] # Chạy khi có code đẩy lên nhánh main hoặc master
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "main", "master" ] # Chạy khi có ai tạo Pull Request vào nhánh này
+    branches: [ "main", "master" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # Thuê một máy chủ ảo chạy hệ điều hành Ubuntu miễn phí của GitHub
+  build-and-test:
+    runs-on: ubuntu-latest
 
     steps:
-    # 1. Tải mã nguồn của bạn từ GitHub xuống máy chủ ảo
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # 2. Cài đặt môi trường Node.js
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' # Update to your target .NET version (e.g., 6.0.x, 7.0.x, 9.0.x)
 
-    # 3. Cài đặt các thư viện phụ thuộc của dự án (tương đương lệnh npm install)
-    - name: Install dependencies
-      run: npm install
+      - name: Restore dependencies
+        run: dotnet restore
 
-    # 4. Chạy các bài kiểm thử tự động (tương đương lệnh npm test)
-    - name: Run tests
-      run: npm test
+      - name: Build solution
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test --no-build --configuration Release --verbosity normal
